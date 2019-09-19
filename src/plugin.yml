@@ -1,0 +1,18 @@
+name: AdvancedDungeons
+authors: [zhehe]
+main: zhehe.advanceddungeons.AdvancedDungeons
+load: startup
+api-version: 1.14
+version: 0.3
+commands:
+  advanceddungeons:
+    aliases: [advdun]
+    description: Generates AdvancedDungeons everywhere
+    usage: /<command> [option] [world-name]
+permissions:
+  advanceddungeons.enter:
+    default: true
+    description: gives acced to the enter option
+  advanceddungeons.op:
+    default: op
+    description: gives acced to the apply/unapply options
