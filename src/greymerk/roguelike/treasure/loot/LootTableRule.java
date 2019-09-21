@@ -10,6 +10,7 @@ import com.google.gson.JsonObject;
 import greymerk.roguelike.treasure.ITreasureChest;
 import greymerk.roguelike.treasure.Treasure;
 import greymerk.roguelike.treasure.TreasureManager;
+import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.loot.LootTable;

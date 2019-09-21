@@ -130,10 +130,11 @@ public class WorldEditor implements IWorldEditor{
 		MetaBlock currentBlock = getMetaBlock(pos);
 		
                 Material material = block.getBlock();
+                Material mat = currentBlock.getBlock();
                                 
-		if(material == Material.CHEST) return false;
-		if(material == Material.TRAPPED_CHEST) return false;
-		if(material == Material.SPAWNER) return false;
+		if(mat == Material.CHEST) return false;
+		if(mat == Material.TRAPPED_CHEST) return false;
+		if(mat == Material.SPAWNER) return false;
                 
 //                if(material.isOccluding()) flags = 1;
 		

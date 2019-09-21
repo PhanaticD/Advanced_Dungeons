@@ -6,8 +6,12 @@ import java.util.Random;
 import greymerk.roguelike.worldgen.Coord;
 import greymerk.roguelike.worldgen.IWorldEditor;
 import greymerk.roguelike.worldgen.MetaBlock;
+import java.util.logging.Level;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Chest;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 //import net.minecraft.init.Blocks;
@@ -89,7 +93,15 @@ public class TreasureChest implements ITreasureChest{
 
 	@Override
 	public void setLootTable(LootTable table) {
-		Lootable tmp = (Lootable) this.block.getState();
-                tmp.setLootTable(table);
+//		Lootable tmp = (Lootable) this.block.getState();
+//                tmp.setLootTable(table);
+            BlockState bs = this.block.getState();
+            if(bs instanceof Chest) {
+                Chest chest = (Chest) bs;
+                chest.setLootTable(table);
+                chest.update();
+                
+                Bukkit.getLogger().log(Level.SEVERE, this.block.getLocation().toString());
+            }
 	}
 }

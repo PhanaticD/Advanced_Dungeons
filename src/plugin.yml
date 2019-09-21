@@ -3,7 +3,7 @@ authors: [zhehe]
 main: zhehe.advanceddungeons.AdvancedDungeons
 load: startup
 api-version: 1.14
-version: 0.3
+version: 0.5
 commands:
   advanceddungeons:
     aliases: [advdun]
@@ -15,4 +15,4 @@ permissions:
     description: gives acced to the enter option
   advanceddungeons.op:
     default: op
-    description: gives acced to the apply/unapply options
+    description: gives acced to the apply/unapply/reload options

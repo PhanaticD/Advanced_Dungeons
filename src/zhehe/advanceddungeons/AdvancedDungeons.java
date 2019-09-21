@@ -128,12 +128,23 @@ public class AdvancedDungeons extends JavaPlugin {
 
             switch (args.length) {
                 default:  // /advanceddungeons help
-                    Bukkit.getLogger().log(Level.INFO, "Advanced Dungeons Help");
-//                    Bukkit.getLogger().log(Level.INFO, "[OP] /advanceddungeons create worldname");
-                    Bukkit.getLogger().log(Level.INFO, "/advanceddungeons enter worldname");
-                    Bukkit.getLogger().log(Level.INFO, "[OP] /advanceddungeons apply worldname");
-                    Bukkit.getLogger().log(Level.INFO, "[OP] /advanceddungeons unapply worldname");
+                    sender.sendMessage("Advanced Dungeons Help");
+                    sender.sendMessage("/advanceddungeons enter worldname");
+                    sender.sendMessage("[OP] /advanceddungeons apply worldname");
+                    sender.sendMessage("[OP] /advanceddungeons unapply worldname");
+                    sender.sendMessage("[OP] /advanceddungeons reload");
                     break;
+                case 1:
+                    String op1 = args[0];
+                    if(op1.equals("reload")) {
+                        if(!senderHasOPPermission(sender)) return true;
+                        wc.init();
+                        sender.sendMessage("Done");
+                        return true;
+                    } else {
+                        sender.sendMessage("Invalid options...");
+                        return true;
+                    }
                 case 2: // /advanceddungeons options worldname
                     String option = args[0];
                     String worldName = args[1];
@@ -164,10 +175,12 @@ public class AdvancedDungeons extends JavaPlugin {
                         }
                         player.teleport(world.getSpawnLocation());
                     } else if(option.equals("apply")) {
+                        if(!senderHasOPPermission(sender)) return true;
                         wc.addWorld(worldName);
                         sender.sendMessage("Done");
                         return true;
                     } else if(option.equals("unapply")) {
+                        if(!senderHasOPPermission(sender)) return true;
                         wc.removeWorld(worldName);
                         sender.sendMessage("Done");
                         return true;
