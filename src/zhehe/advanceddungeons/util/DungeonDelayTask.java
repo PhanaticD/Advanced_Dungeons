@@ -18,14 +18,7 @@ import org.bukkit.Material;
  * @author Zhehe
  */
 public class DungeonDelayTask implements IDungeonTask {
-
 	@Override
 	public void execute(IWorldEditor editor, Random rand, IDungeon dungeon, ISettings settings) {
-            List<DelayNode> list = editor.getDelayList();
-            
-            for(DelayNode node : list) {
-                editor.setBlockDelay(node.pos, node.material);
-            }
-            editor.resetDelayList();
 	}
 }

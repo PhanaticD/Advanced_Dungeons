@@ -3,7 +3,7 @@ authors: [zhehe]
 main: zhehe.advanceddungeons.AdvancedDungeons
 load: startup
 api-version: 1.14
-version: 0.5
+version: 0.7
 commands:
   advanceddungeons:
     aliases: [advdun]

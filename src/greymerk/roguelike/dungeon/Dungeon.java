@@ -27,6 +27,10 @@ import greymerk.roguelike.worldgen.IWorldEditor;
 import greymerk.roguelike.worldgen.shapes.RectSolid;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Set;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -42,6 +46,8 @@ import zhehe.advanceddungeons.util.BiomeDictionary;
 import zhehe.advanceddungeons.util.BiomeDictionary.Type;
 
 public class Dungeon implements IDungeon{
+        public static int count = 0;
+        public static boolean isSpawning = false;
 	public static final int VERTICAL_SPACING = 10;
 	public static final int TOPLEVEL = 50;
 	
@@ -53,6 +59,28 @@ public class Dungeon implements IDungeon{
 	private List<IDungeonLevel> levels;
 
 	private IWorldEditor editor;
+        
+        private static class Node {
+            int x, z;
+            public Node(int x, int z) {
+                this.x = x;
+                this.z = z;
+            }
+            @Override
+            public String toString() {
+                return "["+ x + "," + z + "]";
+            }
+        }
+        public final static List<Node> queue = new ArrayList<>();
+        private static int max_len = 8;
+        private static double THRESHOLD = 60;
+        
+        private static class SyncBuffer {
+            public Set<String> buffer = new HashSet<>();
+            public LinkedList<String> bufferl = new LinkedList<>();
+            public int buffer_len = 512 * 16 * 16;
+        }
+        private final static SyncBuffer buffer = new SyncBuffer();
 	
 	static{
 		try{
@@ -135,23 +163,37 @@ public class Dungeon implements IDungeon{
 //			Bukkit.getLogger().log(Level.SEVERE, "1.75");
 			if(setting == null) return;
 //			Bukkit.getLogger().log(Level.SEVERE, "2");
-			generate(setting, location);
+                        synchronized(queue) {
+                            for(Node n : queue) {
+                                int dx = (x-4)/16 - n.x;
+                                int dz = (z-4)/16 - n.z;
+                                double distance = Math.sqrt(dx*dx+dz*dz);
+                                if(distance < THRESHOLD) return;
+                            }
+                            
+                            queue.add(new Node((x-4)/16, (z-4)/16));
+                            if(queue.size() > max_len) queue.remove(0);
+                            count++;
+                        }
+			int size = generate(setting, location);
+
 //                        Bukkit.getLogger().log(Level.SEVERE, location.getX() + "," + location.getY() + "," + location.getZ());
-                        AdvancedDungeons.logMessage("Place dungeon @" + editor.getWorldName() + " x=" + location.getX() + ", z=" + location.getZ());
+                        AdvancedDungeons.logMessage("Place dungeon @" + editor.getWorldName() + " x=" + location.getX() + ", z=" + location.getZ()+",size:"+size);
 //			Bukkit.getLogger().log(Level.SEVERE, "3");
 			return;
 		}
 	}
 	
         @Override
-	public void generate(ISettings settings, Coord pos){
+	public int generate(ISettings settings, Coord pos){
 		this.origin = new Coord(pos.getX(), Dungeon.TOPLEVEL, pos.getZ());
-		DungeonGenerator.generate(editor, this, settings, DungeonTaskRegistry.getTaskRegistry());	
+		return DungeonGenerator.generate(editor, this, settings, DungeonTaskRegistry.getTaskRegistry());	
 	}
 	
 	public static boolean canSpawnInChunk(int chunkX, int chunkZ, IWorldEditor editor){
 		
 		if(!RogueConfig.getBoolean(RogueConfig.DONATURALSPAWN)) return false;
+//                if(isSpawning) return false;
 		
 //		String dim = editor.getInfo(new Coord(chunkX * 16, 0, chunkZ * 16)).getDimension();
 //		List<String> wl = new ArrayList<>();
@@ -165,8 +207,18 @@ public class Dungeon implements IDungeon{
 		double spawnChance = RogueConfig.getDouble(RogueConfig.SPAWNCHANCE);
 		Random rand = new Random(Objects.hash(chunkX, chunkZ, 31));
 		
-		return rand.nextFloat() < spawnChance;
-		
+                if(rand.nextFloat() < spawnChance) {
+                    synchronized(queue) {
+                            for(Node n : queue) {
+                                int dx = chunkX - n.x;
+                                int dz = chunkZ - n.z;
+                                double distance = Math.sqrt(dx*dx+dz*dz);
+                                if(distance < THRESHOLD) return false;
+                            }
+                    }
+                    return true;
+                }
+                return false;
 	}
 	
 	public static boolean isVillageChunk(IWorldEditor editor, int chunkX, int chunkZ){
@@ -199,10 +251,12 @@ public class Dungeon implements IDungeon{
         @Override
 	public void spawnInChunk(Random rand, int chunkX, int chunkZ) {
 		if(Dungeon.canSpawnInChunk(chunkX, chunkZ, editor)){
+                    
 			int x = chunkX * 16 + 4;
 			int z = chunkZ * 16 + 4;
-			
+//			isSpawning = true;
 			generateNear(rand, x, z);
+//                        isSpawning = false;
 		}
 	}
         
@@ -221,8 +275,25 @@ public class Dungeon implements IDungeon{
 		if (y < 45) return 1;
 		return 0;
 	}
+        
+        public boolean validLocation(Random rand, Coord column) {
+            return true;
+//            int x = column.getX();
+//            int z = column.getZ();
+//            String pos = x + ":" + z;
+//            synchronized(buffer) {
+//                if(buffer.buffer.contains(pos)) return false;
+//                buffer.buffer.add(pos);
+//                buffer.bufferl.addLast(pos);
+//                if(buffer.bufferl.size() > buffer.buffer_len) {
+//                    buffer.buffer.remove(buffer.bufferl.getFirst());
+//                    buffer.bufferl.removeFirst();
+//                }
+//            }
+//            return validLocationWithOutBuffer(rand, column);
+        }
 	
-	public boolean validLocation(Random rand, Coord column){
+	public boolean validLocationWithOutBuffer(Random rand, Coord column){
 		
 //		Biome biome = editor.getInfo(column).getBiome();
                 Biome biome = editor.getBiome(column);

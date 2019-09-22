@@ -7,8 +7,11 @@ import greymerk.roguelike.treasure.ITreasureChest;
 import greymerk.roguelike.treasure.TreasureManager;
 import java.util.List;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
+import zhehe.advanceddungeons.util.DelayData;
 import zhehe.advanceddungeons.util.DelayNode;
 //import net.minecraft.block.Block;
 //import net.minecraft.tileentity.TileEntity;
@@ -56,6 +59,14 @@ public interface IWorldEditor {
         void resetDelayList();
         
         public void setBlockDelay(Coord pos, Material material);
+        
+        public World getWorld();
+        
+        public List<DelayData> getDataList();
+        
+//        public void setDataDelay(Coord pos, BlockData data);
+        
+        void resetDataList();
 
 //	Coord findNearestStructure(VanillaStructure type, Coord pos);
 	

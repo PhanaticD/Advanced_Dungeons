@@ -23,6 +23,7 @@ import org.bukkit.block.Biome;
 //import net.minecraft.world.WorldServer;
 //import net.minecraft.world.gen.ChunkProviderServer;
 import org.bukkit.block.Block;
+import zhehe.advanceddungeons.util.DelayData;
 import zhehe.advanceddungeons.util.DelayNode;
 import zhehe.advanceddungeons.util.FormatItem;
 
@@ -30,6 +31,7 @@ public class WorldEditor implements IWorldEditor{
 	
 	World world;
         private List<DelayNode> delay = new ArrayList<>();
+        private List<DelayData> data = new ArrayList<>();
 	private Map<Material, Integer> stats;
 	private TreasureManager chests;
 	private static List<Material> invalid;
@@ -53,6 +55,11 @@ public class WorldEditor implements IWorldEditor{
         }
         
         @Override
+        public World getWorld() {
+            return world;
+        }
+        
+        @Override
         public Biome getBiome(Coord pos) {
             return world.getBiome(pos.getX(), pos.getZ());
         }
@@ -69,8 +76,18 @@ public class WorldEditor implements IWorldEditor{
         }
         
         @Override
+        public List<DelayData> getDataList() {
+            return data;
+        }
+        
+        @Override
         public void resetDelayList() {
-            delay.clear();
+            delay = new ArrayList<>();
+        }
+        
+        @Override
+        public void resetDataList() {
+            data = new ArrayList<>();
         }
         
         private boolean needUpdate(Coord pos) {
@@ -124,6 +141,7 @@ public class WorldEditor implements IWorldEditor{
 			//ignore it.
 		}
         }
+        
 	
 	private boolean setBlock(Coord pos, MetaBlock block, int flags, boolean fillAir, boolean replaceSolid){
 		
@@ -154,7 +172,7 @@ public class WorldEditor implements IWorldEditor{
                         || material == Material.NETHER_BRICK_FENCE
                         ) {
                     patch = true;
-                    delay.add(new DelayNode(pos, material));
+//                    delay.add(new DelayNode(pos, material));
                 }
 		
 //                if(needUpdate(pos)) flags = 1;
@@ -163,6 +181,9 @@ public class WorldEditor implements IWorldEditor{
 //			world.setBlockState(pos.getBlockPos(), block.getState(), flags);
                         if(!patch) world.getBlockAt(pos.getX(), pos.getY(), pos.getZ()).setBlockData(block.getState(), flags == 1);
                         else world.getBlockAt(pos.getX(), pos.getY(), pos.getZ()).setType(block.getBlock(), true);
+                        
+//                        if(!patch) data.add(new DelayData(pos, block.getState(), flags == 1));
+//                        else delay.add(new DelayNode(pos, block.getBlock()));
 		} catch(NullPointerException npe){
 			//ignore it.
 		}

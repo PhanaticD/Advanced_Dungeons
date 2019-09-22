@@ -50,7 +50,8 @@ public class TreasureChest implements ITreasureChest{
 			throw new ChestPlacementException("Failed to place chest in world");
 		}
 		
-		this.chest = (InventoryHolder) editor.getBlock(pos).getState();
+                BlockState bs = editor.getBlock(pos).getState();
+		if(bs instanceof InventoryHolder) this.chest = (InventoryHolder) bs;
                 this.block = editor.getBlock(pos);
 		this.inventory = new Inventory(rand, chest);
 		this.seed = (long)Objects.hash(pos.hashCode(), editor.getSeed());

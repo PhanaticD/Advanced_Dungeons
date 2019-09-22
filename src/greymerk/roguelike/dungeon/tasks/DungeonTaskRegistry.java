@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import greymerk.roguelike.dungeon.DungeonStage;
+import zhehe.advanceddungeons.util.DungeonDelayTask;
 
 public class DungeonTaskRegistry implements IDungeonTaskRegistry{
 
@@ -26,6 +27,7 @@ public class DungeonTaskRegistry implements IDungeonTaskRegistry{
 //                this.addTask(new DungeonDelayTask(), DungeonStage.AFTER);
 	}
 	
+        @Override
 	public void addTask(IDungeonTask task, DungeonStage stage){
 		if(!tasks.containsKey(stage)){
 			this.tasks.put(stage, new ArrayList<IDungeonTask>());
@@ -34,9 +36,10 @@ public class DungeonTaskRegistry implements IDungeonTaskRegistry{
 		tasks.get(stage).add(task);
 	}
 	
+        @Override
 	public List<IDungeonTask> getTasks(DungeonStage stage){
 		if(!this.tasks.containsKey(stage)){
-			return new ArrayList<IDungeonTask>();
+			return new ArrayList<>();
 		}
 		return this.tasks.get(stage);
 	}

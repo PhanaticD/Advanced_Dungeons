@@ -6,6 +6,8 @@
 package zhehe.advanceddungeons;
 
 import greymerk.roguelike.DungeonGenerator;
+import greymerk.roguelike.config.RogueConfig;
+import greymerk.roguelike.dungeon.Dungeon;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -39,6 +41,7 @@ public class AdvancedDungeons extends JavaPlugin {
     private static WorldConfig wc;
     private static final String logfile = configDirName + File.separator + "log.txt";
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public static JavaPlugin instance;
 
     public static void logMessage(String message)
     {		
@@ -58,6 +61,8 @@ public class AdvancedDungeons extends JavaPlugin {
     
     @Override
     public void onEnable() {
+        instance = this;
+        
         wc = new WorldConfig();
         wc.init();
         enabled = true;
@@ -76,6 +81,8 @@ public class AdvancedDungeons extends JavaPlugin {
         Bukkit.getLogger().log(Level.INFO, " |_____/ \\__,_|_| |_|\\__, |\\___|\\___/|_| |_|___/");
         Bukkit.getLogger().log(Level.INFO, "                      __/ |                     ");
         Bukkit.getLogger().log(Level.INFO, "                     |___/                      ");
+        
+        RogueConfig.getBoolean(RogueConfig.DONATURALSPAWN);
 //        BukkitRunnable run = new BukkitRunnable() {
 //            @Override
 //            public void run() {
@@ -138,6 +145,9 @@ public class AdvancedDungeons extends JavaPlugin {
                     String op1 = args[0];
                     if(op1.equals("reload")) {
                         if(!senderHasOPPermission(sender)) return true;
+                        sender.sendMessage("Debug INFO:");
+                        sender.sendMessage(Dungeon.queue.toString());
+//                        sender.sendMessage(Boolean.toString(DungeonGenerator.isSpawn));
                         wc.init();
                         sender.sendMessage("Done");
                         return true;

@@ -9,7 +9,7 @@ import greymerk.roguelike.worldgen.Coord;
 
 public interface IDungeon {
 
-	public void generate(ISettings setting, Coord pos);
+	public int generate(ISettings setting, Coord pos);
 	
 	public void spawnInChunk(Random rand, int chunkX, int chunkZ);
 	
