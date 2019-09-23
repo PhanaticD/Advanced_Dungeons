@@ -252,7 +252,7 @@ public enum ItemNovelty {
 			item = new ItemStack(Material.BAKED_POTATO);
 			Loot.setItemName(item, "Hot Potato", TextFormat.DARKPURPLE);
 			Loot.setItemLore(item, "All a hermit needs",  TextFormat.DARKGREEN);
-			item.addEnchantment(Enchant.getEnchant(Enchant.FIREASPECT), 3);
+			item.addUnsafeEnchantment(Enchant.getEnchant(Enchant.FIREASPECT), 3);
 			item.addEnchantment(Enchant.getEnchant(Enchant.SHARPNESS), 2);
 			item.addEnchantment(Enchant.getEnchant(Enchant.KNOCKBACK), 1);
 			return item;
